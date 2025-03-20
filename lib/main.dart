@@ -42,19 +42,39 @@ class FoodShopMain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: FoodSideMenu()
+      ),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Utils.mainDark),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        title: Text('FoodASZtic',
-        style:
-          TextStyle(
-
-          ))
+        title: Image.asset('assets/text.png', width: 350, height: 100),
       ),
       body: Center(
         child: Text('Hello, Welcome to martabak asz`s!'),
+      ),
+    );
+  }
+}
+
+class FoodSideMenu extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Utils.mainColor,
+      padding: EdgeInsets.all(40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 40),
+            child: Image.asset('assets/logo.png', width: 300,),
+          ),
+          Image.asset('assets/text.png', width: 150)
+        ],
       ),
     );
   }
