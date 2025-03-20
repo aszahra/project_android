@@ -12,11 +12,11 @@ void main() {
 class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Future.delayed(const Duration(seconds: 2), () {
-    //   Navigator.of(context).pushReplacement(
-    //     MaterialPageRoute(builder: (context) => FoodShopMain())
-    //   );
-    // });
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => FoodShopMain())
+      );
+    });
 
     return Scaffold(
       backgroundColor: Utils.mainColor,
@@ -25,8 +25,11 @@ class SplashPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-            Image.asset('assets/logo.png', width: 350, height: 350),
-          Image.asset('assets/text.png', width: 350, height: 50),
+            Image.asset('assets/logo.png', width: 350, height: 150),
+          Image.asset('assets/text.png', width: 350, height: 100),
+          SizedBox(
+            height: 200
+          ),
           CircularProgressIndicator()
       ],
     ),
