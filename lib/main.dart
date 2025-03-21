@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'main.dart';
-
 void main() {
   runApp(
     MultiProvider(
@@ -20,12 +18,14 @@ void main() {
         navigatorKey: Utils.mainAppNav,
         routes: {
             '/': (context) => SplashPage(),
-            '/main': (context) => FoodShopMain()
+            '/main': (context) => FoodShopMain(),
+            '/details': (context) => FoodShopDetails(),
         },
       )
     )
   );
 }
+
 
 class SplashPage extends StatelessWidget {
   @override
@@ -424,6 +424,16 @@ class FoodService extends ChangeNotifier {
 
   String? selectedFoodType;
   List<FoodModel> filteredFoods = [];
+  late FoodModel selectedFood;
+
+  FoodModel getSelecteFood() {
+    return selectedFood;
+  }
+
+  void onFoodSelected(FoodModel food) {
+    selectedFood = food;
+    Utils.mainAppNav.currentState!.pushNamed('/details');
+  }
 
   FoodService() {
     selectedFoodType = filterBarItems.first.id;
@@ -507,65 +517,172 @@ class FoodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          width: 150,
-          padding: EdgeInsets.all(15),
-          alignment: Alignment.bottomLeft,
-          margin: EdgeInsets.only(left: 10, top: 20, right: 10, bottom: 20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: Offset(0.0, 4.0)
-              )
-            ]
+    return GestureDetector(
+      onTap: () {
+        var foodService = Provider.of<FoodService>(context, listen: false);
+        foodService.onFoodSelected(foodInfo!);
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: 150,
+            padding: EdgeInsets.all(15),
+            alignment: Alignment.bottomLeft,
+            margin: EdgeInsets.only(left: 10, top: 20, right: 10, bottom: 20),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: Offset(0.0, 4.0)
+                  )
+                ]
+            ),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Image.network(
+                      foodInfo!.imgUrl!,
+                      width: 150, height: 150,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Text('${foodInfo!.name}',
+                      style: TextStyle(
+                          color: Utils.mainDark,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15
+                      )
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                      decoration: BoxDecoration(
+                        color: Utils.mainColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5
+                      ),
+                      child: Text('\Rp${foodInfo!.price!.toStringAsFixed(3)}',
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold
+                          )
+                      )
+                  ),
+                ]
+            ),
+          )
+        ],
+      )
+    );
+  }
+}
+
+class FoodShopDetails extends StatefulWidget {
+  @override
+  State<FoodShopDetails> createState() => _FoodShopDetailsState();
+}
+
+class _FoodShopDetailsState extends State<FoodShopDetails> {
+  FoodModel? selectedFood;
+
+  @override
+  Widget build(BuildContext context) {
+    selectedFood = Utils.foods[0];
+
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Utils.mainDark),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Center(
+          child: SizedBox(
+              width: 200,
+              child: Image.asset('assets/text.png')
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Image.network(
-                    foodInfo!.imgUrl!,
-                    width: 150, height: 150,
-                    fit: BoxFit.cover,
-                ),
-              ),
-              Text('${foodInfo!.name}',
-              style: TextStyle(
-                color: Utils.mainDark,
-                fontWeight: FontWeight.bold,
-                fontSize: 15
-              )
-              ),
-              SizedBox(height: 20),
-              Container(
-                decoration: BoxDecoration(
-                  color: Utils.mainColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: EdgeInsets.only(
-                  left: 10, right: 10, top: 5, bottom: 5
-                ),
-                child: Text('\Rp${foodInfo!.price!.toStringAsFixed(3)}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
+        ),
+        ),
+      body: Column(
+        children: [
+          Container(
+            height: MediaQuery.of(context).size.height / 2,
+            child: Stack(
+              children: [
+                Image.network(selectedFood!.imgUrl!,
+                width: MediaQuery.of(context).size.width * 1.25,
+                fit: BoxFit.contain
                 )
-                )
-              ),
-            ]
+              ],
+            )
           ),
-        )
-      ],
+          Expanded(
+            child:
+            Padding(padding: const EdgeInsets.all(30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                        child: Text('${selectedFood!.name!}',
+                        style: TextStyle(color: Utils.mainDark,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold)
+                        )
+                    ),
+                    SizedBox(width: 50),
+                    IconButton(
+                      icon: Icon(Icons.favorite_outline),
+                      color: Utils.mainDark,
+                      onPressed: () {}
+                    )
+                  ]
+                ),
+                SizedBox(height: 10),
+                Container(
+                  padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+                  decoration: BoxDecoration(
+                    color: Utils.mainDark,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text('\Rp${selectedFood!.price!.toStringAsFixed(3)}',
+                  style: TextStyle(color: Colors.white)
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text('${selectedFood!.description!}'),
+                Container(
+                  margin: EdgeInsets.only(top: 20),
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                  decoration: BoxDecoration(
+                    color: Utils.mainDark.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(50)
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.shopping_cart, color: Utils.mainDark),
+                      SizedBox(width: 20),
+                      Text('Add to Cart', style: TextStyle(color: Utils.mainDark)),
+                    ],
+                  ),
+                )
+              ],
+            )
+            )
+          )
+        ]
+      )
     );
   }
 }
@@ -585,6 +702,7 @@ class FoodModel {
     this.type
   });
 }
+
 class Utils {
   static List<FoodModel> foods = [
     FoodModel(
