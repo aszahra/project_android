@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(
-      MaterialApp(
+    MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+              create: (_) => FoodBottomBarSelectionService(),
+          )
+        ],
+      child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: SplashPage()
+        initialRoute: '/',
+        navigatorKey: Utils.mainAppNav,
+        routes: {
+            '/': (context) => SplashPage(),
+            '/main': (context) => FoodShopMain()
+        },
       )
+    )
   );
 }
 
@@ -13,9 +26,7 @@ class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 2), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => FoodShopMain())
-      );
+      Utils.mainAppNav.currentState!.pushReplacementNamed('/main');
     });
 
     return Scaffold(
@@ -52,9 +63,39 @@ class FoodShopMain extends StatelessWidget {
         centerTitle: true,
         title: Image.asset('assets/text.png', width: 350, height: 100),
       ),
-      body: Center(
-        child: Text('Hello, Welcome to martabak asz`s!'),
-      ),
+      body: Column(
+        children: [
+          Expanded(
+              child: Navigator(
+                key: Utils.mainListNav,
+                initialRoute: '/main',
+                onGenerateRoute: (RouteSettings settings) {
+                  Widget page;
+
+                  switch(settings.name) {
+                    case '/main':
+                      page = Center(child: Text('main'));
+                      break;
+                    case '/favorites':
+                      page = Center(child: Text('favorites'));
+                      break;
+                    case '/shoppingcart':
+                      page = Center(child: Text('shoppingcart'));
+                      break;
+                    default:
+                      page = Center(child: Text('main'));
+                      break;
+                  }
+
+                  return PageRouteBuilder(pageBuilder: (_, __, ___) => page,
+                  transitionDuration: const Duration(seconds: 0)
+                  );
+                },
+              )
+          ),
+          FoodBottomBar()
+        ],
+      )
     );
   }
 }
@@ -80,7 +121,61 @@ class FoodSideMenu extends StatelessWidget {
   }
 }
 
+class FoodBottomBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(30),
+      child: Consumer<FoodBottomBarSelectionService>(
+        builder: (context, bottomBarSelectionService, child) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                  icon: Icon(Icons.trip_origin,
+                      color: bottomBarSelectionService.tabSelection == 'main' ? Utils.mainDark : Utils.mainColor),
+                  onPressed: () {
+                    bottomBarSelectionService.setTabSelection('main');
+              }
+              ),
+              IconButton(
+                  icon: Icon(Icons.favorite,
+                      color: bottomBarSelectionService.tabSelection == 'favorites' ? Utils.mainDark : Utils.mainColor),
+                  onPressed: () {
+                bottomBarSelectionService.setTabSelection('favorites');
+              }
+              ),
+              IconButton(
+                  icon: Icon(Icons.shopping_cart,
+                      color: bottomBarSelectionService.tabSelection == 'shoppingcart' ? Utils.mainDark : Utils.mainColor),
+                  onPressed: () {
+                bottomBarSelectionService.setTabSelection('shoppingcart');
+              }
+              ),
+            ],
+          );
+        }
+      )
+    );
+  }
+}
+
+class FoodBottomBarSelectionService extends ChangeNotifier {
+
+  String? tabSelection = 'main';
+
+  void setTabSelection(String selection) {
+    Utils.mainListNav.currentState!.pushReplacementNamed('/' + selection);
+    tabSelection = selection;
+    notifyListeners();
+  }
+}
+
 class Utils {
+  static GlobalKey<NavigatorState> mainListNav = GlobalKey();
+  static GlobalKey<NavigatorState> mainAppNav = GlobalKey();
+
   static const Color mainColor = Color(0xFFFFB30F);
   static const Color mainDark = Color(0xFF775208);
   static const String donutLogoWhiteText = 'https://romanejaquez.github.io/flutter-codelab4/assets/donut_shop_text_reversed.png';
