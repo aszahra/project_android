@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'main.dart';
+
 void main() {
   runApp(
     MultiProvider(
@@ -181,7 +183,14 @@ class FoodMainPage extends StatelessWidget {
     return Column(
       children: [
         FoodPager(),
-        FoodFilterBar()
+        FoodFilterBar(),
+        Expanded(
+            child: Consumer<FoodService>(
+                builder: (context, FoodService, child) {
+                  return FoodList(foods: FoodService.filteredFoods);
+                },
+            )
+        )
       ],
     );
   }
@@ -392,7 +401,7 @@ class FoodFilterBar extends StatelessWidget {
       case 'asin':
         return Alignment.center;
       case 'mini':
-        return Alignment.centerLeft;
+        return Alignment.centerRight;
       default:
         return Alignment.centerLeft;
     }
@@ -414,18 +423,256 @@ class FoodService extends ChangeNotifier {
   ];
 
   String? selectedFoodType;
+  List<FoodModel> filteredFoods = [];
 
   FoodService() {
     selectedFoodType = filterBarItems.first.id;
+    filteredFoodByType(selectedFoodType!);
   }
 
   void filteredFoodByType(String type) {
     selectedFoodType = type;
+    filteredFoods = Utils.foods.where(
+        (d) => d.type == selectedFoodType).toList();
+
     notifyListeners();
   }
 }
 
+class FoodList extends StatefulWidget {
+  List<FoodModel>? foods;
+
+  FoodList({ this.foods });
+
+  @override
+  State<FoodList> createState() => _FoodListState();
+}
+
+class _FoodListState extends State<FoodList> {
+  final GlobalKey<AnimatedListState> _key = GlobalKey();
+  List<FoodModel> insertedItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    var future = Future(() {});
+    for (var i = 0; i < widget.foods!.length; i++) {
+      future = future.then((_) {
+        return Future.delayed(const Duration(milliseconds: 125), () {
+          insertedItems.add(widget.foods![i]);
+          _key.currentState!.insertItem(i);
+        });
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedList(
+      key: _key,
+        scrollDirection: Axis.horizontal,
+        initialItemCount: insertedItems.length,
+        itemBuilder: (context, index, animation) {
+
+          FoodModel currentFood = widget.foods![index];
+
+          return SlideTransition(
+            position: Tween(
+              begin: const Offset(0.2, 0.0),
+              end: const Offset(0.0, 0.0),
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeInOut,
+            )),
+            child: FadeTransition(
+              opacity: Tween(
+                begin: 0.0,
+                end: 1.0,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeInOut,
+              )),
+              child: FoodCard(foodInfo: currentFood),
+            ),
+          );
+        }
+    );
+  }
+}
+
+class FoodCard extends StatelessWidget {
+  FoodModel? foodInfo;
+  FoodCard({ this.foodInfo });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: 150,
+          padding: EdgeInsets.all(15),
+          alignment: Alignment.bottomLeft,
+          margin: EdgeInsets.only(left: 10, top: 20, right: 10, bottom: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: Offset(0.0, 4.0)
+              )
+            ]
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: Image.network(
+                    foodInfo!.imgUrl!,
+                    width: 150, height: 150,
+                    fit: BoxFit.cover,
+                ),
+              ),
+              Text('${foodInfo!.name}',
+              style: TextStyle(
+                color: Utils.mainDark,
+                fontWeight: FontWeight.bold,
+                fontSize: 15
+              )
+              ),
+              SizedBox(height: 20),
+              Container(
+                decoration: BoxDecoration(
+                  color: Utils.mainColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: EdgeInsets.only(
+                  left: 10, right: 10, top: 5, bottom: 5
+                ),
+                child: Text('\Rp${foodInfo!.price!.toStringAsFixed(3)}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold
+                )
+                )
+              ),
+            ]
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class FoodModel {
+  String? imgUrl;
+  String? name;
+  String? description;
+  double? price;
+  String? type;
+
+  FoodModel({
+    this.imgUrl,
+    this.name,
+    this.description,
+    this.price,
+    this.type
+  });
+}
 class Utils {
+  static List<FoodModel> foods = [
+    FoodModel(
+        imgUrl: 'assets/kacangcoklat.jpg',
+        name: 'Martabak Manis Kacang Cokelat',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        price: 25.000,
+        type: 'manis'
+    ),
+    FoodModel(
+      imgUrl: 'assets/r-kejususu.jpg',
+      name: 'Martabak Manis Keju Susu',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+      price: 30.000,
+      type: 'manis',
+    ),
+    FoodModel(
+        imgUrl: 'assets/kejucokelat.jpg',
+        name: 'Martabak Manis Cokelat Keju',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        price: 38.000,
+        type: 'manis'
+    ),
+    FoodModel(
+        imgUrl: 'assets/strawberry.jpg',
+        name: 'Martabak Manis Strawberry Susu',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        price: 37.000,
+        type: 'manis'
+    ),
+    FoodModel(
+        imgUrl: 'assets/ayambiasa.jpg',
+        name: 'Martabak Asin Ayam Biasa',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        price: 30.000,
+        type: 'asin'
+    ),
+    FoodModel(
+        imgUrl: 'assets/bebekbiasa.jpg',
+        name: 'Martabak Asin Bebek Biasa',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        price: 35.000,
+        type: 'asin'
+    ),
+    FoodModel(
+        imgUrl: 'assets/ayamspesial.jpg',
+        name: 'Martabak Asin Ayam Spesial',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        price: 40.000,
+        type: 'asin'
+    ),
+    FoodModel(
+        imgUrl: 'assets/bebekspesial.jpg',
+        name: 'Martabak Asin Bebek Spesial',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        price: 45.000,
+        type: 'asin'
+    ),
+    FoodModel(
+        imgUrl: 'assets/kacangcoklat.jpg',
+        name: 'Martabak Mini Kacang Cokelat',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        price: 10.000,
+        type: 'mini'
+    ),
+    FoodModel(
+        imgUrl: 'assets/m-kejususu.jpg',
+        name: 'Martabak Mini Keju Susu',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        price: 15.000,
+        type: 'mini'
+    ),
+    FoodModel(
+        imgUrl: 'assets/strawberry.jpg',
+        name: 'Martabak Mini Strawberry',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        price: 15.000,
+        type: 'mini'
+    ),
+    FoodModel(
+        imgUrl: 'assets/kejucokelat.jpg',
+        name: 'Martabak Mini Cokelat Keju',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        price: 15.000,
+        type: 'mini'
+    )
+  ];
+
   static GlobalKey<NavigatorState> mainListNav = GlobalKey();
   static GlobalKey<NavigatorState> mainAppNav = GlobalKey();
 
