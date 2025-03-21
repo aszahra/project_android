@@ -7,6 +7,9 @@ void main() {
         providers: [
           ChangeNotifierProvider(
               create: (_) => FoodBottomBarSelectionService(),
+          ),
+          ChangeNotifierProvider(
+              create: (_) => FoodService(),
           )
         ],
       child: MaterialApp(
@@ -177,7 +180,8 @@ class FoodMainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        FoodPager()
+        FoodPager(),
+        FoodFilterBar()
       ],
     );
   }
@@ -322,6 +326,102 @@ class PageViewIndicator extends StatelessWidget {
         );
       })
     );
+  }
+}
+
+class FoodFilterBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(20),
+      child: Consumer<FoodService>(
+        builder: (context, foodService, child) {
+          return Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(
+                  foodService.filterBarItems.length, (index) {
+
+                    FoodFilterBarItem item = foodService.filterBarItems[index];
+
+                    return GestureDetector(
+                      onTap: () {
+                        foodService.filteredFoodByType(item.id!);
+                      },
+                      child: Container(
+                          child: Text('${item.label!}',
+                              style: TextStyle(
+                                  color: foodService.selectedFoodType == item.id ?
+                                  Utils.mainColor : Colors.black, fontWeight: FontWeight.bold)
+                          )
+                      )
+                    );
+                }
+                )
+              ),
+              SizedBox(height: 10),
+              Stack(
+                children: [
+                  AnimatedAlign(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeInOut,
+                    alignment: alignmentBasedOnTap(foodService.selectedFoodType),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 3 - 20,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Utils.mainColor,
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+                    ),
+                  )
+                ],
+              )
+            ]
+          );
+        }
+      )
+    );
+  }
+  
+  Alignment alignmentBasedOnTap(filterBarId) {
+    switch(filterBarId) {
+      case 'manis':
+        return Alignment.centerLeft;
+      case 'asin':
+        return Alignment.center;
+      case 'mini':
+        return Alignment.centerLeft;
+      default:
+        return Alignment.centerLeft;
+    }
+  }
+}
+
+class FoodFilterBarItem {
+  String? id;
+  String? label;
+
+  FoodFilterBarItem({ this.id, this.label });
+}
+
+class FoodService extends ChangeNotifier {
+  List<FoodFilterBarItem> filterBarItems = [
+    FoodFilterBarItem(id: 'manis', label: 'Manis'),
+    FoodFilterBarItem(id: 'asin', label: 'Asin'),
+    FoodFilterBarItem(id: 'mini', label: 'Mini'),
+  ];
+
+  String? selectedFoodType;
+
+  FoodService() {
+    selectedFoodType = filterBarItems.first.id;
+  }
+
+  void filteredFoodByType(String type) {
+    selectedFoodType = type;
+    notifyListeners();
   }
 }
 
