@@ -726,7 +726,7 @@ class _FoodShopDetailsState extends State<FoodShopDetails> {
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   Text(
                     '${selectedFood!.weight!}',
                     style: TextStyle(
@@ -734,7 +734,7 @@ class _FoodShopDetailsState extends State<FoodShopDetails> {
                       fontSize: 16,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   Text(
                     '${selectedFood!.description!}',
                     style: TextStyle(
@@ -742,7 +742,7 @@ class _FoodShopDetailsState extends State<FoodShopDetails> {
                       fontSize: 16,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 15),
                   Consumer<FoodShoppingCartService>(
                     builder: (context, cartService, child) {
                       if (!cartService.isFoodInCart(selectedFood!)) {
@@ -876,7 +876,7 @@ class FoodShoppingCartPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Shopping Cart'),
+          title: Image.asset('assets/myfood.png', width: 100),
         actions: [
           if (cartService.cartFoods.isNotEmpty)
             IconButton(
@@ -1088,7 +1088,7 @@ class FavoritesPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Favorites'),
+        title: Image.asset('assets/myfav.png', width: 120)
       ),
       body: ListView.builder(
         itemCount: favoritesService.favoriteFoods.length,
@@ -1154,7 +1154,7 @@ class Utils {
     FoodModel(
         imgUrl: 'assets/kacangcoklat.jpg',
         name: 'Martabak Manis Kacang Cokelat',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        description: 'Martabak manis dengan topping kacang dan cokelat yang lezat, cocok untuk pencinta rasa manis dan gurih.',
         price: 25.000,
         type: 'manis',
         id: '01',
@@ -1164,7 +1164,7 @@ class Utils {
     FoodModel(
       imgUrl: 'assets/r-kejususu.jpg',
       name: 'Martabak Manis Keju Susu',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+      description: 'Martabak manis dengan kombinasi keju dan susu yang creamy, memberikan cita rasa yang kaya dan nikmat.',
       price: 30.000,
       type: 'manis',
       id: '02',
@@ -1174,7 +1174,7 @@ class Utils {
     FoodModel(
         imgUrl: 'assets/kejucokelat.jpg',
         name: 'Martabak Manis Cokelat Keju',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        description: 'Martabak manis dengan paduan cokelat dan keju yang sempurna.',
         price: 38.000,
         type: 'manis',
         id: '03',
@@ -1184,7 +1184,7 @@ class Utils {
     FoodModel(
         imgUrl: 'assets/strawberry.jpg',
         name: 'Martabak Manis Strawberry Susu',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        description: 'Martabak manis dengan topping strawberry segar dan susu, memberikan rasa segar dan manis yang menggoda.',
         price: 37.000,
         type: 'manis',
         id: '04',
@@ -1193,8 +1193,8 @@ class Utils {
     ),
     FoodModel(
         imgUrl: 'assets/ayambiasa.jpg',
-        name: 'Martabak Asin Ayam Biasa',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        name: 'Martabak Ayam Biasa',
+        description: 'Martabak asin dengan isian ayam yang gurih dan lezat, cocok untuk yang menyukai rasa asin dan gurih.',
         price: 30.000,
         type: 'asin',
         id: '05',
@@ -1203,8 +1203,8 @@ class Utils {
     ),
     FoodModel(
         imgUrl: 'assets/bebekbiasa.jpg',
-        name: 'Martabak Asin Bebek Biasa',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        name: 'Martabak Bebek Biasa',
+        description: 'Martabak asin dengan isian daging bebek yang gurih dan nikmat, memberikan cita rasa yang khas.',
         price: 35.000,
         type: 'asin',
         id: '06',
@@ -1213,8 +1213,8 @@ class Utils {
     ),
     FoodModel(
         imgUrl: 'assets/ayamspesial.jpg',
-        name: 'Martabak Asin Ayam Spesial',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        name: 'Martabak Ayam Spesial',
+        description: 'Martabak asin dengan isian ayam spesial yang lebih banyak dan bumbu yang lebih kaya, cocok untuk yang menginginkan rasa yang lebih intens.',
         price: 40.000,
         type: 'asin',
         id: '07',
@@ -1223,8 +1223,8 @@ class Utils {
     ),
     FoodModel(
         imgUrl: 'assets/bebekspesial.jpg',
-        name: 'Martabak Asin Bebek Spesial',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        name: 'Martabak Bebek Spesial',
+        description: 'Martabak asin dengan isian daging bebek spesial yang lebih banyak dan bumbu yang lebih kaya, memberikan cita rasa yang lebih menggugah selera.',
         price: 45.000,
         type: 'asin',
         id: '08',
@@ -1234,7 +1234,7 @@ class Utils {
     FoodModel(
         imgUrl: 'assets/kacangcoklat.jpg',
         name: 'Martabak Mini Kacang Cokelat',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        description: 'Martabak mini dengan topping kacang dan cokelat, cocok untuk camilan kecil yang manis dan gurih.',
         price: 10.000,
         type: 'mini',
         id: '09',
@@ -1244,7 +1244,7 @@ class Utils {
     FoodModel(
         imgUrl: 'assets/m-kejususu.jpg',
         name: 'Martabak Mini Keju Susu',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        description: 'Martabak mini dengan kombinasi keju dan susu yang creamy, cocok untuk camilan kecil yang nikmat.',
         price: 15.000,
         type: 'mini',
         id: '10',
@@ -1254,7 +1254,7 @@ class Utils {
     FoodModel(
         imgUrl: 'assets/strawberry.jpg',
         name: 'Martabak Mini Strawberry',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        description: 'Martabak mini dengan topping strawberry segar, cocok untuk camilan kecil yang segar dan manis.',
         price: 15.000,
         type: 'mini',
         id: '11',
@@ -1264,7 +1264,7 @@ class Utils {
     FoodModel(
         imgUrl: 'assets/kejucokelat.jpg',
         name: 'Martabak Mini Cokelat Keju',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce blandit, tellus condimentum cursus gravida, lorem augue venenatis elit, sit amet bibendum quam neque id sapien.',
+        description: 'Martabak mini dengan paduan cokelat dan keju, cocok untuk camilan kecil yang manis dan gurih.',
         price: 15.000,
         type: 'mini',
         id: '12',
