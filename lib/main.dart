@@ -917,23 +917,23 @@ class FoodShoppingCartPage extends StatelessWidget {
                       color: Utils.mainDark,
                     ),
                   ),
-                  SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      cartService.clearCart();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Utils.mainColor,
-                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                    ),
-                    child: Text(
-                      'Clear All',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+                  // SizedBox(height: 10),
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     cartService.clearCart();
+                  //   },
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: Utils.mainColor,
+                  //     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  //   ),
+                  //   child: Text(
+                  //     'Clear All',
+                  //     style: TextStyle(
+                  //       color: Colors.white,
+                  //       fontSize: 16,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
